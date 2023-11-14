@@ -42,7 +42,7 @@ public class ProductController {
     public List<Product> searchProducts(
             @RequestParam("q") String query
     ) {
-        var products = productService.listProductsByLetter(query);
+        var products = productService.searchProducts(query);
         log.trace("listProduct -> {}", products);
         return products;
     }

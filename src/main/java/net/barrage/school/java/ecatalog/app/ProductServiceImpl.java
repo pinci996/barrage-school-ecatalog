@@ -21,7 +21,7 @@ public class ProductServiceImpl implements ProductService {
     // FYI - https://www.baeldung.com/jackson-object-mapper-tutorial
     private final ObjectMapper objectMapper;
 
-    @Value("${ecatalog.products.source-path}")
+    @Value("${ecatalog.products.sources.url}")
     private File productsSourceFile;
 
     // Does override in this case signals us that we simply implement the interface method
@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
 
     @SneakyThrows
     @Override
-    public List<Product> listProductsByLetter(String q) {
+    public List<Product> searchProducts(String q) {
         return objectMapper.readValue(productsSourceFile, SourceProductList.class).stream()
                 .map(sourceProduct -> convert(sourceProduct))
                 .filter(product -> product.getName().contains(q) || product.getDescription().contains(q))
