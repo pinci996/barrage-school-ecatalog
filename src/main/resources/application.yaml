@@ -1,6 +1,6 @@
-#Does this here work like .env in javascript?
-#I see that we are using "${ecatalog.products.source-path}" in Implementation,
-#so I'm wondering if that's the case here?
+spring:
+  application:
+    name: E-Catalog
 
 logging:
   level:
@@ -8,15 +8,13 @@ logging:
 
 ecatalog:
   products:
-    source-path: src/main/resources/static/products.json
     sources:
       - name: Uncle
-        url: https://www.dropbox.com/scl/fi/mhq4vmv42x1hy5k430ae3/products.json?rlkey=00w6n2cfjk8p5wwizz6c4tckr&dl=0
         format: json
-      - name: Mirko
-        url: https://www.dropbox.com/scl/fi/rxime4x4tvzxoqvts5g4d/vegetables.xlsx?rlkey=7mrjxnnuqrxygmmi79di5klgl&dl=0
-        format: xlsx
-      - name: Slavko
-        url: https://www.dropbox.com/scl/fi/wbbsxcx6mh58iood031qo/wines.xml?rlkey=x7dmdsnv0gjvalskxwstlxjlr&dl=0
+        url: https://www.dropbox.com/scl/fi/mhq4vmv42x1hy5k430ae3/products.json?rlkey=00w6n2cfjk8p5wwizz6c4tckr&dl=1
+      - name: John
         format: xml
-
+        url: https://www.dropbox.com/scl/fi/cazd7v18qx9q1nwy7wivp/vina.xml?rlkey=axpm8tcfkwqd3cf8n2khxgiqz&dl=1
+      - name: Bob
+        format: xlsx
+        url: https://www.dropbox.com/scl/fi/rxime4x4tvzxoqvts5g4d/vegetables.xlsx?rlkey=7mrjxnnuqrxygmmi79di5klgl&dl=1
