@@ -1,6 +1,8 @@
 package net.barrage.school.java.ecatalog.app;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.barrage.school.java.ecatalog.config.ProductSourceProperties;
@@ -12,16 +14,14 @@ import org.springframework.stereotype.Component;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 
 @RequiredArgsConstructor
-public class JsonProductSource implements ProductSource {
+public class XmlProductSource implements ProductSource {
     private final ProductSourceProperties.SourceProperty property;
     private final ObjectMapper objectMapper;
 
-    private static final Logger log = LoggerFactory.getLogger(JsonProductSource.class);
+    private static final Logger log = LoggerFactory.getLogger(XmlProductSource.class);
 
     @RequiredArgsConstructor
     @Component
@@ -30,19 +30,24 @@ public class JsonProductSource implements ProductSource {
 
         @Override
         public Set<String> getSupportedFormats() {
-            return Set.of("json");
+            return Set.of("xml");
         }
 
         @Override
         public ProductSource create(ProductSourceProperties.SourceProperty psp) {
-            return new JsonProductSource(psp, objectMapper);
+            return new XmlProductSource(psp, objectMapper);
         }
     }
+
 
     @Override
     public List<Product> getProducts() {
         try {
-            return objectMapper.readValue(new URL(property.getUrl()).openStream(), SourceProductList.class).stream()
+            XmlMapper xmlMapper = new XmlMapper();
+            SourceProductList sourceProductList = xmlMapper.readValue(new URL(property.getUrl()).openStream(), SourceProductList.class);
+            log.info("XML: {}", sourceProductList);
+
+            return sourceProductList.stream()
                     .map(sourceProduct -> convert(sourceProduct))
                     .toList();
         } catch (Exception e1) {
@@ -54,12 +59,9 @@ public class JsonProductSource implements ProductSource {
 
     private Product convert(SourceProduct sourceProduct) {
         var product = new Product();
-        product.setId(UUID.randomUUID());
-        product.setName(sourceProduct.getName());
-        product.setDescription(sourceProduct.getNotes());
-        product.setImage(Optional.ofNullable(sourceProduct.productMedia)
-                .flatMap(media -> media.stream().findFirst())
-                .orElse(null));
+        product.setName(String.valueOf(sourceProduct.getTitle()));
+        product.setDescription(sourceProduct.getDescription());
+        product.setImage(null);
         product.setPrice(sourceProduct.getPrice());
         return product;
     }
@@ -68,10 +70,10 @@ public class JsonProductSource implements ProductSource {
     }
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     static class SourceProduct {
-        private String name;
-        private String notes;
-        private List<String> productMedia;
+        private String title;
+        private String description;
         private double price;
     }
 }
