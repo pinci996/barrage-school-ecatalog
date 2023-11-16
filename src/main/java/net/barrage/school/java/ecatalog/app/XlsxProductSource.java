@@ -1,8 +1,6 @@
 package net.barrage.school.java.ecatalog.app;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.barrage.school.java.ecatalog.config.ProductSourceProperties;
 import net.barrage.school.java.ecatalog.model.Product;
@@ -22,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -30,7 +27,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class XlsxProductSource implements ProductSource {
     private final ProductSourceProperties.SourceProperty property;
-    private final ObjectMapper objectMapper;
 
     private static final Logger log = LoggerFactory.getLogger(JsonProductSource.class);
 
@@ -46,7 +42,7 @@ public class XlsxProductSource implements ProductSource {
 
         @Override
         public ProductSource create(ProductSourceProperties.SourceProperty psp) {
-            return new XlsxProductSource(psp, objectMapper);
+            return new XlsxProductSource(psp);
         }
     }
 
@@ -67,7 +63,6 @@ public class XlsxProductSource implements ProductSource {
                 for (Row row : sheet) {
                     String name = row.getCell(0).getStringCellValue();
                     String photoUrl = row.getCell(1).getStringCellValue();
-                    String quantity = row.getCell(2).getStringCellValue();
                     double price;
 
                     Cell priceCell = row.getCell(4);
@@ -84,13 +79,13 @@ public class XlsxProductSource implements ProductSource {
                         log.warn("Unexpected cell type for price: {}", priceCell.getCellType());
                         price = 0.0;
                     }
-                    SourceProduct sourceProduct = new SourceProduct();
-                    sourceProduct.setName(name);
-                    sourceProduct.setPhoto_url(photoUrl);
-                    sourceProduct.setQuantity(quantity);
-                    sourceProduct.setPrice(price);
+                    Product product = new Product();
+                    product.setName(name);
+                    product.setImage(photoUrl);
+                    product.setDescription(null);
+                    product.setPrice(price);
+                    product.setId(UUID.randomUUID());
 
-                    Product product = convert(sourceProduct);
                     products.add(product);
                 }
 
@@ -102,29 +97,6 @@ public class XlsxProductSource implements ProductSource {
             log.warn("Oops!", e);
             throw new RuntimeException(e);
         }
-    }
-
-
-    private Product convert(XlsxProductSource.SourceProduct sourceProduct) {
-        var product = new Product();
-        product.setId(UUID.randomUUID());
-        product.setName(sourceProduct.getName());
-        product.setDescription(sourceProduct.getQuantity());
-        product.setImage(Collections.singletonList(sourceProduct.getPhoto_url()).toString());
-        product.setPrice(sourceProduct.getPrice());
-        return product;
-    }
-
-    static class SourceProductList extends ArrayList<SourceProduct> {
-    }
-
-    @Data
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    static class SourceProduct {
-        private String name;
-        private String photo_url;
-        private String quantity;
-        private double price;
     }
 
 }

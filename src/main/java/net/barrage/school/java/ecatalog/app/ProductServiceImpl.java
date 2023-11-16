@@ -1,17 +1,12 @@
 package net.barrage.school.java.ecatalog.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.SneakyThrows;
 import net.barrage.school.java.ecatalog.model.Product;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 //@RequiredArgsConstructor
 @Service
@@ -37,4 +32,13 @@ public class ProductServiceImpl implements ProductService {
         }
         return result;
     }
+
+//    @SneakyThrows
+//    @Override
+//    public List<Product> searchProducts(String q) {
+//        return objectMapper.readValue(productsSourceFile, SourceProductList.class).stream()
+//                .map(sourceProduct -> convert(sourceProduct))
+//                .filter(product -> product.getName().contains(q) || product.getDescription().contains(q))
+//                .toList();
+//    }
 }
