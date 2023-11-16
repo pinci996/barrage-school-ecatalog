@@ -2,6 +2,66 @@
 
 Educational Project, Barrage's Java School
 
+## Task 3
+
+Uncle and his friends are happy for now... It's time to think about tech dept :)
+
+You are from CS department and realize that reading products from dropbox on every request is not what we would call
+performance. Even reading it from local file is too expensive.
+
+You want to cache all the products in memory and invalidate them from time to time.
+
+And you decide to start covering your code with tests.
+
+### What to do?
+
+* Think on config change. What extra configs will be needed?
+* How do you plan to schedule cache invalidation?
+    * Consider [@Scheduled](https://www.baeldung.com/spring-scheduled-tasks) for invalidation job
+* Try to write more tests
+  in [ProductServiceImplTest](src/test/java/net/barrage/school/java/ecatalog/app/ProductServiceImplTest.java)
+    * We gonna use [JUnit5](https://junit.org/junit5/docs/current/user-guide/) in our project
+    * Write tests to cover search and your changes about product sources
+    * Write more test classes if you need different [profile](src/test/resources/application-fake.yaml)
+
+## Task 2
+
+Uncle is really proud of his site! He has shown it to all his neighbours and friends. Bob and John are also farmers from
+the same village. They've been thinking of similar catalog for quite a long time, but business takes all their time.
+They always put it off until later and now ask ur uncle just to publish their products in the same catalog.
+
+You agreed, but remembering the sync process, asked them to put their lists to cloud in same format. But these guys are
+old, to old for this modern stuff... So they only manage to put their files only to Dropbox. Converting - it's something
+they don't even understand in theory :)
+
+So now u will have 3 sources:
+
+- https://www.dropbox.com/scl/fi/mhq4vmv42x1hy5k430ae3/products.json?rlkey=00w6n2cfjk8p5wwizz6c4tckr&dl=0
+- https://www.dropbox.com/scl/fi/rxime4x4tvzxoqvts5g4d/vegetables.xlsx?rlkey=7mrjxnnuqrxygmmi79di5klgl&dl=0
+- https://www.dropbox.com/scl/fi/wbbsxcx6mh58iood031qo/wines.xml?rlkey=x7dmdsnv0gjvalskxwstlxjlr&dl=0
+
+### What to do?
+
+* Now instead of one local file in one format you gonna have 3 cloud links to files in 3 different formats: json, xml,
+  xlsx. Think of it!
+    * How to organise your code to be able to deal with all these 3 formats? What to do if in some nearest future you
+      will need to support more formats?
+    * Are there any libraries which can work with docx, xml? We don't want to invent a wheel. We want as less code as
+      only possible.
+    * Can [common design patterns](https://refactoring.guru/design-patterns/catalog) help you anyhow?
+    * How do you think the configuration of your product sources should look like now?
+        * Check the [old variant](src/main/resources/application.yaml)
+        * Suggest something new. Keep in mind that the list of sources and formats can grow.
+    * Read about [@ConfigurationProperties](https://www.baeldung.com/configuration-properties-in-spring-boot). It may
+      help u!
+    * Read about [@Configuration](https://www.digitalocean.com/community/tutorials/spring-configuration-annotation). You
+      will need it to create a bean factory for your new product sources!
+* Without writing anything discuss your ideas with your team and mentor.
+    * Find uncovered questions
+    * Google them
+    * Discuss everything again and finalize ur plan
+* Create `TASK-2` branch, write your code and send to the mentor.
+
 ## Task 1
 
 Let's begin with some business story :)
