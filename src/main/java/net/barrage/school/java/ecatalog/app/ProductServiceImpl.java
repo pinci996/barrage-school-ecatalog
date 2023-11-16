@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 //@RequiredArgsConstructor
 @Service
@@ -33,12 +34,15 @@ public class ProductServiceImpl implements ProductService {
         return result;
     }
 
-//    @SneakyThrows
-//    @Override
-//    public List<Product> searchProducts(String q) {
-//        return objectMapper.readValue(productsSourceFile, SourceProductList.class).stream()
-//                .map(sourceProduct -> convert(sourceProduct))
-//                .filter(product -> product.getName().contains(q) || product.getDescription().contains(q))
-//                .toList();
-//    }
+    @SneakyThrows
+    @Override
+    public List<Product> searchProducts(String q) {
+        var result = new ArrayList<Product>();
+        for (var ps : productSources) {
+            result.addAll(ps.getProducts());
+        }
+        return result.stream()
+                .filter(p -> Objects.requireNonNullElse(p.getName(), "").toLowerCase().contains(q) || Objects.requireNonNullElse(p.getDescription(), "").toLowerCase().contains(q))
+                .toList();
+    }
 }

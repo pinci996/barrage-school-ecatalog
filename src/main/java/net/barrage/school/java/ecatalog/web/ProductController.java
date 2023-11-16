@@ -5,6 +5,7 @@ import net.barrage.school.java.ecatalog.app.ProductService;
 import net.barrage.school.java.ecatalog.model.Product;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -28,12 +29,12 @@ public class ProductController {
         return products;
     }
 
-//    @GetMapping("/search")
-//    public List<Product> searchProducts(
-//            @RequestParam("q") String query
-//    ) {
-//        var products = productService.searchProducts(query);
-//        log.trace("listProduct -> {}", products);
-//        return products;
-//    }
+    @GetMapping("/search")
+    public List<Product> searchProducts(
+            @RequestParam("q") String query
+    ) {
+        var products = productService.searchProducts(query);
+        log.trace("listProduct -> {}", products);
+        return products;
+    }
 }

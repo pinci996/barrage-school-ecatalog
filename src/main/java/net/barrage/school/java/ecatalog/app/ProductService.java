@@ -11,5 +11,5 @@ public interface ProductService {
      */
     List<Product> listProducts();
 
-//    List<Product> searchProducts(String q);
+    List<Product> searchProducts(String q);
 }
