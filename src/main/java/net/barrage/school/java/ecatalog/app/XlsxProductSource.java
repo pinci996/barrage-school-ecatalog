@@ -2,12 +2,11 @@ package net.barrage.school.java.ecatalog.app;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.FileUtils;
-
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.barrage.school.java.ecatalog.config.ProductSourceProperties;
 import net.barrage.school.java.ecatalog.model.Product;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -66,7 +65,6 @@ public class XlsxProductSource implements ProductSource {
                 List<Product> products = new ArrayList<>();
 
                 for (Row row : sheet) {
-                    // Assuming the columns are in order: nameA1, photo_url, quantity, id, price
                     String name = row.getCell(0).getStringCellValue();
                     String photoUrl = row.getCell(1).getStringCellValue();
                     String quantity = row.getCell(2).getStringCellValue();
@@ -105,8 +103,6 @@ public class XlsxProductSource implements ProductSource {
             throw new RuntimeException(e);
         }
     }
-
-
 
 
     private Product convert(XlsxProductSource.SourceProduct sourceProduct) {
