@@ -45,7 +45,6 @@ public class XmlProductSource implements ProductSource {
         try {
             XmlMapper xmlMapper = new XmlMapper();
             SourceProductList sourceProductList = xmlMapper.readValue(new URL(property.getUrl()).openStream(), SourceProductList.class);
-            log.info("XML: {}", sourceProductList);
 
             return sourceProductList.stream()
                     .map(sourceProduct -> convert(sourceProduct))

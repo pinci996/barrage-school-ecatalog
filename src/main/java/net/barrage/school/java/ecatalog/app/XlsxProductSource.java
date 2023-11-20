@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.barrage.school.java.ecatalog.config.ProductSourceProperties;
 import net.barrage.school.java.ecatalog.model.Product;
-import org.apache.commons.io.FileUtils;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -15,11 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -50,52 +46,36 @@ public class XlsxProductSource implements ProductSource {
     public List<Product> getProducts() {
         try {
             URL url = new URL(property.getUrl());
+            InputStream inputStream = url.openStream();
+            Workbook workbook = new XSSFWorkbook(inputStream);
 
-            File tempFile = File.createTempFile("tempfile", ".xlsx");
-            FileUtils.copyURLToFile(url, tempFile);
+            Sheet sheet = workbook.getSheetAt(0);
 
-            try (FileInputStream file = new FileInputStream(tempFile);
-                 Workbook workbook = new XSSFWorkbook(file)) {
+            Iterator<Row> iterator = sheet.iterator();
+            List<Product> productList = new ArrayList<>();
 
-                Sheet sheet = workbook.getSheetAt(0);
-                List<Product> products = new ArrayList<>();
-
-                for (Row row : sheet) {
-                    String name = row.getCell(0).getStringCellValue();
-                    String photoUrl = row.getCell(1).getStringCellValue();
-                    double price;
-
-                    Cell priceCell = row.getCell(4);
-                    if (priceCell.getCellType() == CellType.NUMERIC) {
-                        price = priceCell.getNumericCellValue();
-                    } else if (priceCell.getCellType() == CellType.STRING) {
-                        try {
-                            price = Double.parseDouble(priceCell.getStringCellValue());
-                        } catch (NumberFormatException e) {
-                            log.warn("Error parsing price as a double", e);
-                            price = 0.0;
-                        }
-                    } else {
-                        log.warn("Unexpected cell type for price: {}", priceCell.getCellType());
-                        price = 0.0;
-                    }
-                    Product product = new Product();
-                    product.setName(name);
-                    product.setImage(photoUrl);
-                    product.setDescription(null);
-                    product.setPrice(price);
-                    product.setId(UUID.randomUUID());
-
-                    products.add(product);
+            while (iterator.hasNext()) {
+                Row currentRow = iterator.next();
+                if (currentRow.getRowNum() == 0) {
+                    continue;
                 }
 
-                return products;
-            } finally {
-                FileUtils.deleteQuietly(tempFile);
+                Product product = new Product();
+                product.setName(currentRow.getCell(0).getStringCellValue());
+                product.setImage(currentRow.getCell(1).getStringCellValue());
+                product.setId(UUID.randomUUID());
+                product.setDescription(null);
+                product.setPrice(Double.parseDouble(currentRow.getCell(4).getStringCellValue()));
+
+                productList.add(product);
             }
-        } catch (IOException e) {
-            log.warn("Oops!", e);
-            throw new RuntimeException(e);
+
+            workbook.close();
+            return productList;
+
+        } catch (Exception e1) {
+            log.warn("Oops!", e1);
+            throw new RuntimeException(e1);
         }
     }
 

@@ -1,6 +1,14 @@
 spring:
   application:
     name: E-Catalog
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost/postgres
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: example
 
 logging:
   level:
