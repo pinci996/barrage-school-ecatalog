@@ -39,7 +39,15 @@ public class XmlProductSource implements ProductSource {
         }
     }
 
-
+    public String getName() {
+        try {
+            return property.getName();
+        } catch (Exception e1) {
+            log.warn("Oops!", e1);
+            throw new RuntimeException(e1);
+        }
+    }
+    
     @Override
     public List<Product> getProducts() {
         try {
