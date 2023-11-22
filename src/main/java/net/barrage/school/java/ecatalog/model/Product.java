@@ -13,6 +13,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +37,10 @@ public class Product {
     @Column(columnDefinition = "text")
     private String image;
 
-    private double price;
+    private Double price;
+
+    @Column(name = "created_at")
+    LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "merchant_id")

@@ -37,9 +37,4 @@ public class ProductController {
         log.trace("listProduct -> {}", products);
         return products;
     }
-
-//    @PostMapping("/save")
-//    public void saveProducts() {
-//        productService.saveProducts();
-//    }
 }

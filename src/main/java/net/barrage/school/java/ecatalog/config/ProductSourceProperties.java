@@ -16,6 +16,7 @@ public class ProductSourceProperties {
         String name;
         String format;
         String url;
+        boolean remote;
     }
 
     private List<SourceProperty> sources;

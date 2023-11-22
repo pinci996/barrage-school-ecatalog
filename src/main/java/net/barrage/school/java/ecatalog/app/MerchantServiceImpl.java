@@ -17,6 +17,7 @@ public class MerchantServiceImpl implements MerchantService {
     @Autowired
     MerchantRepository merchantRepository;
 
+
     @SneakyThrows
     @Override
     public List<Merchant> listMerchants() {

@@ -13,11 +13,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 //@RequiredArgsConstructor
 @Slf4j
@@ -72,10 +72,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void saveProducts() {
         for (var ps : productSources) {
+            if (ps.isRemote()) {
+                continue;
+            }
             var name = ps.getName();
 
             var merchant = merchantRepository.save(new Merchant()
-                    .setName(name + LocalTime.now()));
+                    .setName(name));
 
             var allProducts = ps.getProducts().stream()
                     .map(p -> new Product()
@@ -92,13 +95,13 @@ public class ProductServiceImpl implements ProductService {
 
     @SneakyThrows
     @Override
-    public Optional<Product> getProductById(Long productId) {
+    public Optional<Product> getProductById(UUID productId) {
         return productRepository.findById(productId);
     }
 
     @SneakyThrows
     @Override
-    public void deleteProduct(Long productId) {
+    public void deleteProduct(UUID productId) {
         boolean exists = productRepository.existsById(productId);
         if (!exists) {
             throw new IllegalStateException("product with id" + productId + "does not exist");
@@ -110,21 +113,23 @@ public class ProductServiceImpl implements ProductService {
     @SneakyThrows
     @Override
     @Transactional
-    public void updateProduct(Long productId, String name, String description, Double price) {
+    public void updateProduct(UUID productId, Product updatedProduct) {
         Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalStateException(
                 "product with id" + productId + "does not exist."
         ));
-
-        if (name != null && !name.isEmpty() && !Objects.equals(product.getName(), name)) {
-            product.setName(name);
+        if (updatedProduct.getName() != null && !updatedProduct.getName().isEmpty() &&
+                !Objects.equals(product.getName(), updatedProduct.getName())) {
+            product.setName(updatedProduct.getName());
         }
 
-        if (description != null && !description.isEmpty() && !Objects.equals(product.getDescription(), description)) {
-            product.setDescription(description);
+        if (updatedProduct.getDescription() != null && !updatedProduct.getDescription().isEmpty() &&
+                !Objects.equals(product.getDescription(), updatedProduct.getDescription())) {
+            product.setDescription(updatedProduct.getDescription());
         }
 
-        if (!Double.isNaN(price) && !Objects.equals(product.getPrice(), price)) {
-            product.setPrice(price);
+
+        if (updatedProduct.getPrice() != null && !Objects.equals(product.getPrice(), updatedProduct.getPrice())) {
+            product.setPrice(updatedProduct.getPrice());
         }
     }
 

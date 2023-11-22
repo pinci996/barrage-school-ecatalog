@@ -4,6 +4,7 @@ import net.barrage.school.java.ecatalog.model.Product;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ProductService {
 
@@ -16,10 +17,10 @@ public interface ProductService {
 
     void saveProducts();
 
-    Optional<Product> getProductById(Long productId);
+    Optional<Product> getProductById(UUID productId);
 
-    void deleteProduct(Long productId);
+    void deleteProduct(UUID productId);
 
-    void updateProduct(Long productId, String name, String description, Double Price);
+    void updateProduct(UUID productId, Product updatedProduct);
 
 }

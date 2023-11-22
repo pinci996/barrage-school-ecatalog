@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 
 public interface MerchantRepository extends CrudRepository<Merchant, Long> {
-
     @Query("SELECT p FROM Product p WHERE p.merchant.id = ?1")
     List<Product> findProductsByMerchantId(Long merchantId);
+
 }

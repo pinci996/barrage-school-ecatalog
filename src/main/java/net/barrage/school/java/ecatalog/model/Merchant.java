@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Data
@@ -23,6 +24,9 @@ public class Merchant {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(name = "created_at")
+    LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "merchant")
     private Set<Product> products;
