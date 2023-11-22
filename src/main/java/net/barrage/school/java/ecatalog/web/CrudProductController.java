@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+// AR: What was wrong with ProductController? Why have u copy-pasted it to new set of controllers?
 @Slf4j
 @RestController
 @RequestMapping("/e-catalog/api/v1/crud/products")

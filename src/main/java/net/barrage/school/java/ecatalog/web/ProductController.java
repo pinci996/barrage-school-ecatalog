@@ -25,7 +25,7 @@ public class ProductController {
     @GetMapping
     public List<Product> listProducts() {
         var products = productService.listProducts();
-        log.trace("listProducts -> {}", products);
+        log.info("listProducts -> {}", products);
         return products;
     }
 

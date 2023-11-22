@@ -25,9 +25,11 @@ import java.util.UUID;
 public class ProductServiceImpl implements ProductService {
 
     // FYI - https://www.baeldung.com/jackson-object-mapper-tutorial
+    // AR: You dont need it anymore
     private final ObjectMapper objectMapper;
     private final List<ProductSource> productSources;
 
+    // to delete
     @Autowired
     private ProductSourceProperties properties;
 
@@ -48,6 +50,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Cacheable("products")
     public List<Product> listProducts() {
+        // AR: Why do you continue read products from sources here? Shouldn't we get them from db?
         var result = new ArrayList<Product>();
         for (var ps : productSources) {
             result.addAll(ps.getProducts());
@@ -57,6 +60,7 @@ public class ProductServiceImpl implements ProductService {
 
     @SneakyThrows
     @Override
+    // AR: It can't work like that, explain me why!
     @Cacheable("search")
     public List<Product> searchProducts(String q) {
         var result = new ArrayList<Product>();
@@ -70,6 +74,9 @@ public class ProductServiceImpl implements ProductService {
 
     @SneakyThrows
     @Override
+    // AR: That's bad idea. For whom remote=true u have to keep syncing automatically by cron.
+    // For whom remote=false u need to do it only once explicitly.
+    // U cant fit to ur goals with this API. U'd better to have explicit REST co u can choose who gonna be synced.
     public void saveProducts() {
         for (var ps : productSources) {
             if (ps.isRemote()) {
@@ -117,6 +124,10 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() -> new IllegalStateException(
                 "product with id" + productId + "does not exist."
         ));
+
+        // AR: Don't think u really need these check + u can do similar by calling just
+        //  productRepository.save(updatedProduct);
+
         if (updatedProduct.getName() != null && !updatedProduct.getName().isEmpty() &&
                 !Objects.equals(product.getName(), updatedProduct.getName())) {
             product.setName(updatedProduct.getName());
@@ -134,6 +145,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+    // AR: 5 sec cache? Really?
     @Scheduled(fixedRate = 5000)
     @CacheEvict(value = "products", allEntries = true)
     public void clearProductCache() {
