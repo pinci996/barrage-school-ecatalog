@@ -54,11 +54,7 @@ public class CrudProductController {
     @PutMapping(path = "/{productId}")
     public void updateProduct(
             @PathVariable("productId") UUID productId,
-            @RequestBody Product updatedProduct)
-//            @RequestParam(required = false) String name,
-//            @RequestParam(required = false) String description,
-//            @RequestParam(required = false) Double price) {
-    {
+            @RequestBody Product updatedProduct) {
         productService.updateProduct(productId, updatedProduct);
     }
 

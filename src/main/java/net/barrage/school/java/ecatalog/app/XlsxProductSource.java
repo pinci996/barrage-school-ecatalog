@@ -48,13 +48,9 @@ public class XlsxProductSource implements ProductSource {
         return property.isRemote();
     }
 
+    @SneakyThrows
     public String getName() {
-        try {
-            return property.getName();
-        } catch (Exception e1) {
-            log.warn("Oops!", e1);
-            throw new RuntimeException(e1);
-        }
+        return property.getName();
     }
 
     @Override
