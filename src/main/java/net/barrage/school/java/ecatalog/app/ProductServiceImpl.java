@@ -138,7 +138,6 @@ public class ProductServiceImpl implements ProductService {
             product.setDescription(updatedProduct.getDescription());
         }
 
-
         if (updatedProduct.getPrice() != null && !Objects.equals(product.getPrice(), updatedProduct.getPrice())) {
             product.setPrice(updatedProduct.getPrice());
         }

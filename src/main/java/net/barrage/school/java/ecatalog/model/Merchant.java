@@ -17,6 +17,7 @@ import java.util.Set;
 @ToString
 @Accessors(chain = true)
 @Entity
+//@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
