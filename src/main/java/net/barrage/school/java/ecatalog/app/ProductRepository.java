@@ -9,4 +9,5 @@ import java.util.UUID;
 interface ProductRepository extends CrudRepository<Product, UUID> {
     List<Product> findByName(String name);
 
+    void deleteByMerchantId(Long merchantId);
 }

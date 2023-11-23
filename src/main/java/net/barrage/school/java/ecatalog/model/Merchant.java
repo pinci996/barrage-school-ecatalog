@@ -17,7 +17,6 @@ import java.util.Set;
 @ToString
 @Accessors(chain = true)
 @Entity
-//@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 public class Merchant {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -28,6 +27,9 @@ public class Merchant {
 
     @Column(name = "created_at")
     LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "remote")
+    boolean remote;
 
     @OneToMany(mappedBy = "merchant")
     private Set<Product> products;

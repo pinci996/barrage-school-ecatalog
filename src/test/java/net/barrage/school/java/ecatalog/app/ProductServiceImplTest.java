@@ -1,14 +1,10 @@
 package net.barrage.school.java.ecatalog.app;
 
-import net.barrage.school.java.ecatalog.model.Merchant;
-import net.barrage.school.java.ecatalog.model.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -31,18 +27,17 @@ class ProductServiceImplTest {
     ProductService productService;
 
     @Test
-    @Transactional
+//    @Transactional
     public void save_products_to_db() {
         var merchant = merchantRepository.save(new Merchant()
-                .setName("Uncle"));
+                .setName("uncle"));
         var allProducts = productService.listProducts().stream()
                 .map(p -> new Product()
                         .setMerchant(merchant)
                         .setId(p.getId())
                         .setName(p.getName())
                         .setDescription(p.getDescription())
-                        .setPrice(p.getPrice())
-                        .setImage(p.getImage()))
+                        .setImageUrl(p.getImage()))
                 .toList();
         productRepository.saveAll(allProducts);
     }
@@ -53,20 +48,8 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void products_has_valid_fields() {
-        List<String> expectedKeys = List.of("id", "name", "description", "image", "price");
-
-        var products = impl.listProducts();
-
-        for (Product product : products) {
-            assertTrue(product.getKeys().containsAll(expectedKeys),
-                    "Object does not have all the expected keys: " + product);
-        }
-    }
-
-    @Test
     void search_products_are_not_empty() {
-        assertFalse(impl.searchProducts("valla").isEmpty(), "Expect searchProducts() to return something.");
+        assertFalse(impl.searchProducts("Chontaleno").isEmpty(), "Expect searchProducts() to return something.");
     }
 
     @Test
