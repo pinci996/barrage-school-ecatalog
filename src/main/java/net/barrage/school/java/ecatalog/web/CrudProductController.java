@@ -51,6 +51,11 @@ public class CrudProductController {
         productService.saveProducts();
     }
 
+    @PostMapping
+    public void createProducts(@RequestBody Product newProduct) {
+        productService.createProduct(newProduct);
+    }
+
 
     @GetMapping(path = "/{productId}")
     public Optional<Product> getProductById(@PathVariable("productId") UUID productId) {

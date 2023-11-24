@@ -103,6 +103,17 @@ public class ProductServiceImpl implements ProductService {
         productRepository.save(product);
     }
 
+    public void createProduct(Product newProduct) {
+        var product = new Product()
+                .setMerchant(newProduct.getMerchant())
+                .setName(newProduct.getName())
+                .setDescription(newProduct.getDescription())
+                .setImage(newProduct.getImage())
+                .setPrice(newProduct.getPrice());
+
+        productRepository.save(product);
+    }
+
     @Scheduled(fixedRate = 100000)
     @CacheEvict(value = "products", allEntries = true)
     public void clearProductCache() {

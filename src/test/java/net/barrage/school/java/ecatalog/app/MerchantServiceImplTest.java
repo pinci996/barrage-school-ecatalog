@@ -1,5 +1,7 @@
 package net.barrage.school.java.ecatalog.app;
 
+import net.barrage.school.java.ecatalog.model.Merchant;
+import net.barrage.school.java.ecatalog.model.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +40,8 @@ public class MerchantServiceImplTest {
                         .setId(p.getId())
                         .setName(p.getName())
                         .setDescription(p.getDescription())
-                        .setImageUrl(p.getImage()))
+                        .setPrice(p.getPrice())
+                        .setImage(p.getImage()))
                 .toList();
         productRepository.saveAll(allProducts);
     }
@@ -49,6 +52,7 @@ public class MerchantServiceImplTest {
     }
 
     @Test
+    @Transactional
     void get_product_by_id_should_succeed() {
         this.save_products_to_db();
         var merchants = merchantRepository.findAll();

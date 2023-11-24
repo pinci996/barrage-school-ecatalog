@@ -19,6 +19,8 @@ public interface ProductService {
 
     Optional<Product> getProductById(UUID productId);
 
+    void createProduct(Product newProduct);
+
     void deleteProduct(UUID productId);
 
     void updateProduct(UUID productId, Product updatedProduct);

@@ -1,5 +1,7 @@
 package net.barrage.school.java.ecatalog.app;
 
+import net.barrage.school.java.ecatalog.model.Merchant;
+import net.barrage.school.java.ecatalog.model.Product;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,7 +29,6 @@ class ProductServiceImplTest {
     ProductService productService;
 
     @Test
-//    @Transactional
     public void save_products_to_db() {
         var merchant = merchantRepository.save(new Merchant()
                 .setName("uncle"));
@@ -37,7 +38,8 @@ class ProductServiceImplTest {
                         .setId(p.getId())
                         .setName(p.getName())
                         .setDescription(p.getDescription())
-                        .setImageUrl(p.getImage()))
+                        .setPrice(p.getPrice())
+                        .setImage(p.getImage()))
                 .toList();
         productRepository.saveAll(allProducts);
     }
