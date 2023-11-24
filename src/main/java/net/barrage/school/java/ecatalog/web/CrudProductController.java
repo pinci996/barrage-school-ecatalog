@@ -3,6 +3,7 @@ package net.barrage.school.java.ecatalog.web;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.barrage.school.java.ecatalog.app.ProductService;
+import net.barrage.school.java.ecatalog.app.ProductSyncService;
 import net.barrage.school.java.ecatalog.model.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-// AR: What was wrong with ProductController? Why have u copy-pasted it to new set of controllers?
 @Slf4j
 @RestController
 @RequestMapping("/e-catalog/api/v1/crud/products")
@@ -28,10 +28,14 @@ public class CrudProductController {
 
     private final ProductService productService;
 
+    private final ProductSyncService productSyncService;
+
 
     public CrudProductController(
-            ProductService productService) {
+            ProductService productService,
+            ProductSyncService productSyncService) {
         this.productService = productService;
+        this.productSyncService = productSyncService;
     }
 
     @GetMapping("/list")
@@ -87,5 +91,10 @@ public class CrudProductController {
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
+    }
+
+    @PostMapping(path = "/{merchantName}")
+    public void syncSingleMerchant(@PathVariable("merchantName") String merchantName) {
+        productSyncService.syncProductsForMerchant(merchantName);
     }
 }
