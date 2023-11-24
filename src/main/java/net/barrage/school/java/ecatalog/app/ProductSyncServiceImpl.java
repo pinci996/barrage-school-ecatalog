@@ -28,7 +28,7 @@ public class ProductSyncServiceImpl implements ProductSyncService {
     }
 
     @Override
-    @Scheduled(fixedRate = 100000)
+    @Scheduled(fixedRate = 10000)
     @Transactional
     public void syncRemoteProducts() {
         for (var ps : productSources) {
@@ -37,7 +37,26 @@ public class ProductSyncServiceImpl implements ProductSyncService {
             }
             var name = ps.getName();
 
-            syncInternal(ps, name);
+            Optional<Merchant> existingMerchantOptional = merchantRepository.findByName(name);
+
+            Merchant merchant;
+            if (existingMerchantOptional.isPresent()) {
+                merchant = existingMerchantOptional.get();
+                productRepository.deleteByMerchantId(merchant.getId());
+            } else {
+                merchant = merchantRepository.save(new Merchant().setName(name).setRemote(true));
+            }
+
+            var allProducts = ps.getProducts().stream()
+                    .map(p -> new Product()
+                            .setMerchant(merchant)
+                            .setId(p.getId())
+                            .setName(p.getName())
+                            .setDescription(p.getDescription())
+                            .setPrice((p.getPrice()))
+                            .setImage(p.getImage()))
+                    .toList();
+            productRepository.saveAll(allProducts);
         }
     }
 
@@ -49,31 +68,24 @@ public class ProductSyncServiceImpl implements ProductSyncService {
             if (!Objects.equals(name, ps.getName())) {
                 continue;
             }
-            syncInternal(ps, name);
-        }
 
-    }
-
-    private void syncInternal(ProductSource ps, String name) {
-        Optional<Merchant> existingMerchantOptional = merchantRepository.findByName(name);
-
-        Merchant merchant;
-        if (existingMerchantOptional.isPresent()) {
-            merchant = existingMerchantOptional.get();
+            Merchant merchant = merchantRepository.findByName(name).orElseThrow(() -> new IllegalStateException(
+                    "merchant with name" + name + "does not exist."
+            ));
             productRepository.deleteByMerchantId(merchant.getId());
-        } else {
-            merchant = merchantRepository.save(new Merchant().setName(name).setRemote(true));
+
+
+            var allProducts = ps.getProducts().stream()
+                    .map(p -> new Product()
+                            .setMerchant(merchant)
+                            .setId(p.getId())
+                            .setName(p.getName())
+                            .setDescription(p.getDescription())
+                            .setPrice((p.getPrice()))
+                            .setImage(p.getImage()))
+                    .toList();
+            productRepository.saveAll(allProducts);
         }
 
-        var allProducts = ps.getProducts().stream()
-                .map(p -> new Product()
-                        .setMerchant(merchant)
-                        .setId(p.getId())
-                        .setName(p.getName())
-                        .setDescription(p.getDescription())
-                        .setPrice((p.getPrice()))
-                        .setImage(p.getImage()))
-                .toList();
-        productRepository.saveAll(allProducts);
     }
 }
