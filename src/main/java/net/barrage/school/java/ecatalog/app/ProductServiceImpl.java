@@ -21,8 +21,6 @@ import java.util.UUID;
 public class ProductServiceImpl implements ProductService {
     private final List<ProductSource> productSources;
 
-    private final MerchantService merchantService;
-
     private final MerchantRepository merchantRepository;
 
     private final ProductRepository productRepository;
@@ -30,11 +28,9 @@ public class ProductServiceImpl implements ProductService {
     public ProductServiceImpl(
             List<ProductSource> productSources,
             MerchantRepository merchantRepository,
-            MerchantService merchantService,
             ProductRepository productRepository) {
         this.productSources = productSources;
         this.merchantRepository = merchantRepository;
-        this.merchantService = merchantService;
         this.productRepository = productRepository;
     }
 
