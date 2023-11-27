@@ -3,7 +3,6 @@ package net.barrage.school.java.ecatalog.app;
 import lombok.SneakyThrows;
 import net.barrage.school.java.ecatalog.model.Merchant;
 import net.barrage.school.java.ecatalog.model.Product;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,15 +15,17 @@ import java.util.Optional;
 public class ProductSyncServiceImpl implements ProductSyncService {
     private final List<ProductSource> productSources;
 
-    @Autowired
-    MerchantRepository merchantRepository;
+    private final MerchantRepository merchantRepository;
 
-    @Autowired
-    ProductRepository productRepository;
+    private final ProductRepository productRepository;
 
     public ProductSyncServiceImpl(
-            List<ProductSource> productSources) {
+            List<ProductSource> productSources,
+            MerchantRepository merchantRepository,
+            ProductRepository productRepository) {
         this.productSources = productSources;
+        this.merchantRepository = merchantRepository;
+        this.productRepository = productRepository;
     }
 
     @Override
@@ -64,6 +65,13 @@ public class ProductSyncServiceImpl implements ProductSyncService {
     @SneakyThrows
     @Transactional
     public void syncProductsForMerchant(String name) {
+        // Find all merchants, return error if there is not exactly 1 merchant
+        var nameSize = merchantRepository.countByName(name);
+        if (nameSize != 1) {
+            throw new IllegalStateException("There should be exactly 1 merchant with this name");
+        }
+
+        // Sync single merchant
         for (var ps : productSources) {
             if (!Objects.equals(name, ps.getName())) {
                 continue;
@@ -72,8 +80,6 @@ public class ProductSyncServiceImpl implements ProductSyncService {
             Merchant merchant = merchantRepository.findByName(name).orElseThrow(() -> new IllegalStateException(
                     "merchant with name" + name + "does not exist."
             ));
-            productRepository.deleteByMerchantId(merchant.getId());
-
 
             var allProducts = ps.getProducts().stream()
                     .map(p -> new Product()

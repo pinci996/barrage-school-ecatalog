@@ -4,6 +4,7 @@ import net.barrage.school.java.ecatalog.model.Product;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 public interface ProductService {
@@ -24,5 +25,8 @@ public interface ProductService {
     void deleteProduct(UUID productId);
 
     void updateProduct(UUID productId, Product updatedProduct);
+
+    Set<Product> getProductsFromMerchant(Long merchantId);
+
 
 }

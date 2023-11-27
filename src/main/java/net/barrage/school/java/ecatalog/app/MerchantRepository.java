@@ -13,6 +13,7 @@ public interface MerchantRepository extends CrudRepository<Merchant, Long> {
     List<Product> findProductsByMerchantId(Long merchantId);
 
     Optional<Merchant> findByName(String name);
-    
+
+    long countByName(String name);
 
 }

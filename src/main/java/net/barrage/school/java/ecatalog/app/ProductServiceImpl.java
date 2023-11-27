@@ -1,18 +1,19 @@
 package net.barrage.school.java.ecatalog.app;
 
-import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.barrage.school.java.ecatalog.model.Merchant;
 import net.barrage.school.java.ecatalog.model.Product;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -20,22 +21,30 @@ import java.util.UUID;
 public class ProductServiceImpl implements ProductService {
     private final List<ProductSource> productSources;
 
-    @Autowired
-    MerchantRepository merchantRepository;
+    private final MerchantService merchantService;
 
-    @Autowired
-    ProductRepository productRepository;
+    private final MerchantRepository merchantRepository;
+
+    private final ProductRepository productRepository;
 
     public ProductServiceImpl(
-            List<ProductSource> productSources) {
+            List<ProductSource> productSources,
+            MerchantRepository merchantRepository,
+            MerchantService merchantService,
+            ProductRepository productRepository) {
         this.productSources = productSources;
+        this.merchantRepository = merchantRepository;
+        this.merchantService = merchantService;
+        this.productRepository = productRepository;
     }
 
     @SneakyThrows
     @Override
     @Cacheable("products")
     public List<Product> listProducts() {
-        return (List<Product>) productRepository.findAll();
+        List<Product> productList = new ArrayList<>();
+        productRepository.findAll().forEach(productList::add);
+        return productList;
     }
 
     @SneakyThrows
@@ -112,6 +121,14 @@ public class ProductServiceImpl implements ProductService {
                 .setPrice(newProduct.getPrice());
 
         productRepository.save(product);
+    }
+
+    @SneakyThrows
+    @Override
+    @Transactional(readOnly = true)
+    public Set<Product> getProductsFromMerchant(Long merchantId) {
+        var merchant = merchantRepository.findById(merchantId);
+        return merchant.orElseThrow().getProducts();
     }
 
     @Scheduled(fixedRate = 100000)

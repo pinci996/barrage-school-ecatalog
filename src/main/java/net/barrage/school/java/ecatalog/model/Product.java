@@ -1,6 +1,5 @@
 package net.barrage.school.java.ecatalog.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,11 +11,7 @@ import lombok.Data;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -43,17 +38,6 @@ public class Product {
     LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "merchant_id")
+    @JoinColumn(name = "merchant_id", nullable = false)
     private Merchant merchant;
-
-    @JsonIgnore
-    public List<String> getKeys() {
-        List<String> keys = new ArrayList<>();
-
-        Field[] fields = this.getClass().getDeclaredFields();
-
-        Arrays.stream(fields).forEach(field -> keys.add(field.getName()));
-
-        return keys;
-    }
 }

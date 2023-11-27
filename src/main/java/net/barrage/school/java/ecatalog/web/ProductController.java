@@ -19,19 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/e-catalog/api/v1/crud/products")
-public class CrudProductController {
+@RequestMapping("/e-catalog/api/v1/products")
+public class ProductController {
 
     private final ProductService productService;
 
     private final ProductSyncService productSyncService;
 
 
-    public CrudProductController(
+    public ProductController(
             ProductService productService,
             ProductSyncService productSyncService) {
         this.productService = productService;
@@ -96,5 +97,10 @@ public class CrudProductController {
     @PostMapping(path = "/{merchantName}")
     public void syncSingleMerchant(@PathVariable("merchantName") String merchantName) {
         productSyncService.syncProductsForMerchant(merchantName);
+    }
+
+    @GetMapping(path = "/{merchantId}")
+    public Set<Product> listProductsFromMerchant(@PathVariable Long merchantId) {
+        return productService.getProductsFromMerchant(merchantId);
     }
 }

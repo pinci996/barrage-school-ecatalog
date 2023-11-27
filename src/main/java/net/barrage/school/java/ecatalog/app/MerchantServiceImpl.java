@@ -2,7 +2,6 @@ package net.barrage.school.java.ecatalog.app;
 
 import lombok.SneakyThrows;
 import net.barrage.school.java.ecatalog.model.Merchant;
-import net.barrage.school.java.ecatalog.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,12 @@ public class MerchantServiceImpl implements MerchantService {
     @Autowired
     MerchantRepository merchantRepository;
 
+    public MerchantServiceImpl(
+            MerchantRepository merchantRepository
+    ) {
+        this.merchantRepository = merchantRepository;
+    }
+
 
     @SneakyThrows
     @Override
@@ -28,11 +33,5 @@ public class MerchantServiceImpl implements MerchantService {
     @Override
     public Optional<Merchant> getMerchantById(Long merchantId) {
         return merchantRepository.findById(merchantId);
-    }
-
-    @SneakyThrows
-    @Override
-    public List<Product> getProductsFromMerchant(Long merchantId) {
-        return merchantRepository.findProductsByMerchantId(merchantId);
     }
 }

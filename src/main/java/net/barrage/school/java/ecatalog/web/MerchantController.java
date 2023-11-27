@@ -3,7 +3,6 @@ package net.barrage.school.java.ecatalog.web;
 import lombok.extern.slf4j.Slf4j;
 import net.barrage.school.java.ecatalog.app.MerchantService;
 import net.barrage.school.java.ecatalog.model.Merchant;
-import net.barrage.school.java.ecatalog.model.Product;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,12 +13,12 @@ import java.util.Optional;
 
 @Slf4j
 @RestController
-@RequestMapping("/e-catalog/api/v1/crud/merchants")
-public class CrudMerchantController {
+@RequestMapping("/e-catalog/api/v1/merchants")
+public class MerchantController {
 
     private final MerchantService merchantService;
 
-    public CrudMerchantController(
+    public MerchantController(
             MerchantService merchantService) {
         this.merchantService = merchantService;
     }
@@ -34,11 +33,6 @@ public class CrudMerchantController {
     @GetMapping(path = "/{merchantId}")
     public Optional<Merchant> getMerchantById(@PathVariable("merchantId") Long merchantId) {
         return merchantService.getMerchantById(merchantId);
-    }
-
-    @GetMapping(path = "/{merchantId}/products")
-    public List<Product> listProductsFromMerchant(@PathVariable Long merchantId) {
-        return merchantService.getProductsFromMerchant(merchantId);
     }
 
 }
