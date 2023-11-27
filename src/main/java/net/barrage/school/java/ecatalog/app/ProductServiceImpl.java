@@ -2,7 +2,6 @@ package net.barrage.school.java.ecatalog.app;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import net.barrage.school.java.ecatalog.model.Merchant;
 import net.barrage.school.java.ecatalog.model.Product;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -49,30 +48,30 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findByName(q);
     }
 
-    @SneakyThrows
-    @Override
-    public void saveProducts() {
-        for (var ps : productSources) {
-            if (ps.isRemote()) {
-                continue;
-            }
-            var name = ps.getName();
-
-            var merchant = merchantRepository.save(new Merchant()
-                    .setName(name));
-
-            var allProducts = ps.getProducts().stream()
-                    .map(p -> new Product()
-                            .setMerchant(merchant)
-                            .setId(p.getId())
-                            .setName(p.getName())
-                            .setDescription(p.getDescription())
-                            .setPrice((p.getPrice()))
-                            .setImage(p.getImage()))
-                    .toList();
-            productRepository.saveAll(allProducts);
-        }
-    }
+//    @SneakyThrows
+//    @Override
+//    public void saveProducts() {
+//        for (var ps : productSources) {
+//            if (ps.isRemote()) {
+//                continue;
+//            }
+//            var name = ps.getName();
+//
+//            var merchant = merchantRepository.save(new Merchant()
+//                    .setName(name));
+//
+//            var allProducts = ps.getProducts().stream()
+//                    .map(p -> new Product()
+//                            .setMerchant(merchant)
+//                            .setId(p.getId())
+//                            .setName(p.getName())
+//                            .setDescription(p.getDescription())
+//                            .setPrice((p.getPrice()))
+//                            .setImage(p.getImage()))
+//                    .toList();
+//            productRepository.saveAll(allProducts);
+//        }
+//    }
 
     @SneakyThrows
     @Override

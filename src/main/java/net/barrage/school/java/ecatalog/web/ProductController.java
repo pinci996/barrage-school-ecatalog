@@ -51,11 +51,6 @@ public class ProductController {
         return productService.searchProducts(query);
     }
 
-    @PostMapping("/save")
-    public void saveProducts() {
-        productService.saveProducts();
-    }
-
     @PostMapping
     public void createProducts(@RequestBody Product newProduct) {
         productService.createProduct(newProduct);
@@ -94,12 +89,12 @@ public class ProductController {
         }
     }
 
-    @PostMapping(path = "/{merchantName}")
+    @PostMapping(path = "/merchants/{merchantName}")
     public void syncSingleMerchant(@PathVariable("merchantName") String merchantName) {
         productSyncService.syncProductsForMerchant(merchantName);
     }
 
-    @GetMapping(path = "/{merchantId}")
+    @GetMapping(path = "/merchants/{merchantId}")
     public Set<Product> listProductsFromMerchant(@PathVariable Long merchantId) {
         return productService.getProductsFromMerchant(merchantId);
     }

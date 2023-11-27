@@ -65,21 +65,17 @@ public class ProductSyncServiceImpl implements ProductSyncService {
     @SneakyThrows
     @Transactional
     public void syncProductsForMerchant(String name) {
-        // Find all merchants, return error if there is not exactly 1 merchant
-        var nameSize = merchantRepository.countByName(name);
-        if (nameSize != 1) {
-            throw new IllegalStateException("There should be exactly 1 merchant with this name");
-        }
-
-        // Sync single merchant
         for (var ps : productSources) {
             if (!Objects.equals(name, ps.getName())) {
                 continue;
             }
 
-            Merchant merchant = merchantRepository.findByName(name).orElseThrow(() -> new IllegalStateException(
-                    "merchant with name" + name + "does not exist."
-            ));
+            Merchant merchant = merchantRepository.save(new Merchant()
+                    .setName(name));
+
+//            Merchant merchant = merchantRepository.findByName(name).orElseThrow(() -> new IllegalStateException(
+//                    "merchant with name" + name + "does not exist."
+//            ));
 
             var allProducts = ps.getProducts().stream()
                     .map(p -> new Product()
