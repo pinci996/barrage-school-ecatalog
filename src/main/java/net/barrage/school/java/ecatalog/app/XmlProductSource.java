@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import net.barrage.school.java.ecatalog.config.ProductSourceProperties;
 import net.barrage.school.java.ecatalog.model.Product;
 import org.slf4j.Logger;
@@ -39,13 +40,21 @@ public class XmlProductSource implements ProductSource {
         }
     }
 
+    @SneakyThrows
+    public String getName() {
+        return property.getName();
+    }
+
+    @SneakyThrows
+    public boolean isRemote() {
+        return property.isRemote();
+    }
 
     @Override
     public List<Product> getProducts() {
         try {
             XmlMapper xmlMapper = new XmlMapper();
             SourceProductList sourceProductList = xmlMapper.readValue(new URL(property.getUrl()).openStream(), SourceProductList.class);
-            log.info("XML: {}", sourceProductList);
 
             return sourceProductList.stream()
                     .map(sourceProduct -> convert(sourceProduct))

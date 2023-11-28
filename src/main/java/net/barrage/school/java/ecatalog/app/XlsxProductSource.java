@@ -1,7 +1,7 @@
 package net.barrage.school.java.ecatalog.app;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import net.barrage.school.java.ecatalog.config.ProductSourceProperties;
 import net.barrage.school.java.ecatalog.model.Product;
 import org.apache.poi.ss.usermodel.Row;
@@ -29,7 +29,6 @@ public class XlsxProductSource implements ProductSource {
     @RequiredArgsConstructor
     @Component
     public static class Factory implements ProductSource.Factory {
-        private final ObjectMapper objectMapper;
 
         @Override
         public Set<String> getSupportedFormats() {
@@ -40,6 +39,16 @@ public class XlsxProductSource implements ProductSource {
         public ProductSource create(ProductSourceProperties.SourceProperty psp) {
             return new XlsxProductSource(psp);
         }
+    }
+
+    @SneakyThrows
+    public boolean isRemote() {
+        return property.isRemote();
+    }
+
+    @SneakyThrows
+    public String getName() {
+        return property.getName();
     }
 
     @Override

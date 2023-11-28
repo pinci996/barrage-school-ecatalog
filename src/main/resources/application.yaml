@@ -1,6 +1,14 @@
 spring:
   application:
     name: E-Catalog
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost/postgres
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: example
 
 logging:
   level:
@@ -15,6 +23,7 @@ ecatalog:
       - name: John
         format: xml
         url: https://www.dropbox.com/scl/fi/yznlmzbqvu0itaysh6069/vina.xml?rlkey=l88zrfm60qbys1nj12p1u605r&dl=1
+        remote: true
       - name: Bob
         format: xlsx
         url: https://www.dropbox.com/scl/fi/rxime4x4tvzxoqvts5g4d/vegetables.xlsx?rlkey=7mrjxnnuqrxygmmi79di5klgl&dl=1

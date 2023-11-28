@@ -3,6 +3,7 @@ package net.barrage.school.java.ecatalog.app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import net.barrage.school.java.ecatalog.config.ProductSourceProperties;
 import net.barrage.school.java.ecatalog.model.Product;
 import org.slf4j.Logger;
@@ -37,6 +38,16 @@ public class JsonProductSource implements ProductSource {
         public ProductSource create(ProductSourceProperties.SourceProperty psp) {
             return new JsonProductSource(psp, objectMapper);
         }
+    }
+
+    @SneakyThrows
+    public String getName() {
+        return property.getName();
+    }
+
+    @SneakyThrows
+    public boolean isRemote() {
+        return property.isRemote();
     }
 
     @Override

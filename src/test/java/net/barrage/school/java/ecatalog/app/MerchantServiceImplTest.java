@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ActiveProfiles("db")
 @SpringBootTest
-class ProductServiceImplTest {
+public class MerchantServiceImplTest {
 
     @Autowired
-    ProductServiceImpl impl;
+    MerchantServiceImpl impl;
 
     @Autowired
     ProductRepository productRepository;
@@ -29,9 +29,11 @@ class ProductServiceImplTest {
     ProductService productService;
 
     @Test
+    @Transactional
     public void save_products_to_db() {
         var merchant = merchantRepository.save(new Merchant()
-                .setName("uncle"));
+                .setName("Mirko"));
+
         var allProducts = productService.listProducts().stream()
                 .map(p -> new Product()
                         .setMerchant(merchant)
@@ -45,39 +47,19 @@ class ProductServiceImplTest {
     }
 
     @Test
-    void products_are_not_empty() {
-        assertFalse(impl.listProducts().isEmpty(), "Expect listProducts() to return something.");
-    }
-
-    @Test
-    void search_products_are_not_empty() {
-        assertFalse(impl.searchProducts("Chontaleno").isEmpty(), "Expect searchProducts() to return something.");
-    }
-
-    @Test
-    void search_products_should_be_empty() {
-        assertTrue(impl.searchProducts("mirko").isEmpty(), "Expect searchProducts() to be empty");
-    }
-
-    @Test
-    @Transactional
-    void delete_product_should_succeed() {
-        this.save_products_to_db();
-        var products = productRepository.findAll();
-        var firstProduct = products.iterator().next();
-        impl.deleteProduct(firstProduct.getId());
-        assertFalse(productRepository.existsById(firstProduct.getId()));
+    void merchants_are_not_empty() {
+        assertFalse(impl.listMerchants().isEmpty(), "Expect listMerchants() to return something.");
     }
 
     @Test
     @Transactional
     void get_product_by_id_should_succeed() {
         this.save_products_to_db();
-        var products = productRepository.findAll();
-        var firstProduct = products.iterator().next();
-        var resultProductOptional = impl.getProductById(firstProduct.getId());
-        assertTrue(resultProductOptional.isPresent());
-        var resultProduct = resultProductOptional.get();
-        assertEquals(resultProduct, firstProduct);
+        var merchants = merchantRepository.findAll();
+        var firstMerchant = merchants.iterator().next();
+        var resultMerchantOptional = impl.getMerchantById(firstMerchant.getId());
+        assertTrue(resultMerchantOptional.isPresent());
+        var resultMerchant = resultMerchantOptional.get();
+        assertEquals(resultMerchant, firstMerchant);
     }
 }

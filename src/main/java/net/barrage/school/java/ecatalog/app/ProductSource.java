@@ -15,4 +15,8 @@ public interface ProductSource {
     }
 
     List<Product> getProducts();
+
+    String getName();
+
+    boolean isRemote();
 }
