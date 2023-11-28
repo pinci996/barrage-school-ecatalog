@@ -2,6 +2,7 @@ package net.barrage.school.java.ecatalog.web;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.barrage.school.java.ecatalog.app.MerchantService;
 import net.barrage.school.java.ecatalog.app.ProductService;
 import net.barrage.school.java.ecatalog.app.ProductSyncService;
 import net.barrage.school.java.ecatalog.model.Product;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -31,12 +31,16 @@ public class ProductController {
 
     private final ProductSyncService productSyncService;
 
+    private final MerchantService merchantService;
+
 
     public ProductController(
             ProductService productService,
-            ProductSyncService productSyncService) {
+            ProductSyncService productSyncService,
+            MerchantService merchantService) {
         this.productService = productService;
         this.productSyncService = productSyncService;
+        this.merchantService = merchantService;
     }
 
     @GetMapping("/list")
@@ -95,7 +99,9 @@ public class ProductController {
     }
 
     @GetMapping(path = "/merchants/{merchantId}")
-    public Set<Product> listProductsFromMerchant(@PathVariable Long merchantId) {
-        return productService.getProductsFromMerchant(merchantId);
+    public List<Product> listProductsFromMerchant(@PathVariable("merchantId") Long merchantId) {
+        var products = productService.getProductsFromMerchant(merchantService.getMerchantById(merchantId));
+        log.trace("listProductsByMerchantId -> {}", products);
+        return products;
     }
 }

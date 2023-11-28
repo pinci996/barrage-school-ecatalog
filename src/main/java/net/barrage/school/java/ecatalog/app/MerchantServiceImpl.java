@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 //@RequiredArgsConstructor
 @Service
@@ -31,7 +30,8 @@ public class MerchantServiceImpl implements MerchantService {
 
     @SneakyThrows
     @Override
-    public Optional<Merchant> getMerchantById(Long merchantId) {
-        return merchantRepository.findById(merchantId);
+    public Merchant getMerchantById(Long merchantId) {
+        return merchantRepository.findById(merchantId)
+                .orElseThrow(() -> new IllegalStateException("Merchant not found with id: " + merchantId));
     }
 }

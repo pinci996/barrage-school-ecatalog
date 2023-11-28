@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -31,8 +30,7 @@ public class MerchantController {
     }
 
     @GetMapping(path = "/{merchantId}")
-    public Optional<Merchant> getMerchantById(@PathVariable("merchantId") Long merchantId) {
+    public Merchant getMerchantById(@PathVariable("merchantId") Long merchantId) {
         return merchantService.getMerchantById(merchantId);
     }
-
 }

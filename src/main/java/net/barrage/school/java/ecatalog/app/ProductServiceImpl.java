@@ -2,6 +2,7 @@ package net.barrage.school.java.ecatalog.app;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import net.barrage.school.java.ecatalog.model.Merchant;
 import net.barrage.school.java.ecatalog.model.Product;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -47,31 +47,6 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> searchProducts(String q) {
         return productRepository.findByName(q);
     }
-
-//    @SneakyThrows
-//    @Override
-//    public void saveProducts() {
-//        for (var ps : productSources) {
-//            if (ps.isRemote()) {
-//                continue;
-//            }
-//            var name = ps.getName();
-//
-//            var merchant = merchantRepository.save(new Merchant()
-//                    .setName(name));
-//
-//            var allProducts = ps.getProducts().stream()
-//                    .map(p -> new Product()
-//                            .setMerchant(merchant)
-//                            .setId(p.getId())
-//                            .setName(p.getName())
-//                            .setDescription(p.getDescription())
-//                            .setPrice((p.getPrice()))
-//                            .setImage(p.getImage()))
-//                    .toList();
-//            productRepository.saveAll(allProducts);
-//        }
-//    }
 
     @SneakyThrows
     @Override
@@ -121,9 +96,8 @@ public class ProductServiceImpl implements ProductService {
     @SneakyThrows
     @Override
     @Transactional(readOnly = true)
-    public Set<Product> getProductsFromMerchant(Long merchantId) {
-        var merchant = merchantRepository.findById(merchantId);
-        return merchant.orElseThrow().getProducts();
+    public List<Product> getProductsFromMerchant(Merchant merchant) {
+        return productRepository.findByMerchant(merchant);
     }
 
     @Scheduled(fixedRate = 100000)

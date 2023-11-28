@@ -73,10 +73,6 @@ public class ProductSyncServiceImpl implements ProductSyncService {
             Merchant merchant = merchantRepository.save(new Merchant()
                     .setName(name));
 
-//            Merchant merchant = merchantRepository.findByName(name).orElseThrow(() -> new IllegalStateException(
-//                    "merchant with name" + name + "does not exist."
-//            ));
-
             var allProducts = ps.getProducts().stream()
                     .map(p -> new Product()
                             .setMerchant(merchant)
