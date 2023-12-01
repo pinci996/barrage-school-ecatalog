@@ -4,4 +4,5 @@ public interface ProductSyncService {
     void syncRemoteProducts();
 
     void syncProductsForMerchant(String name);
+    
 }

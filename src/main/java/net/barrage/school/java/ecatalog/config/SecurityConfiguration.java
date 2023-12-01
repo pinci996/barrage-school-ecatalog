@@ -9,14 +9,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import java.time.Instant;
@@ -36,16 +34,18 @@ public class SecurityConfiguration {
             HttpSecurity http
     ) throws Exception {
         http
-                .csrf(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults())
-                .sessionManagement(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
+                .csrf(Customizer.withDefaults()) // Post methods not working, how to fix?
+//                .csrf(csrf -> csrf.ignoringRequestMatchers("/e-catalog/api/v1/products/merchants/**")) // Post methods working, probably not the best solution
+//                .csrf(AbstractHttpConfigurer::disable) // Post methods working, probably not the best solution
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated()
                 )
                 // https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(
                         jwt -> jwt.decoder(jwtDecoder())))
+                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
                 .anonymous(Customizer.withDefaults());
 
         return http.build();
@@ -83,12 +83,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails user = User.withDefaultPasswordEncoder()
-                .username("user")
-                .password("password")
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }
