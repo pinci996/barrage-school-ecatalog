@@ -8,6 +8,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,9 +35,8 @@ public class SecurityConfiguration {
             HttpSecurity http
     ) throws Exception {
         http
-                .csrf(Customizer.withDefaults()) // Post methods not working, how to fix?
-//                .csrf(csrf -> csrf.ignoringRequestMatchers("/e-catalog/api/v1/products/merchants/**")) // Post methods working, probably not the best solution
-//                .csrf(AbstractHttpConfigurer::disable) // Post methods working, probably not the best solution
+//                .csrf(Customizer.withDefaults()) // Post methods not working, how to fix?
+                .csrf(AbstractHttpConfigurer::disable) // Post methods working, probably not the best solution
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated()
                 )

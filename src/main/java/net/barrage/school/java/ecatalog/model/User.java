@@ -5,7 +5,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.ToString;
@@ -34,7 +36,12 @@ public class User implements UserDetails {
     private String password;
 
     @OneToMany
+    @ToString.Exclude
     private List<User> roles;
+
+    @OneToOne
+    @JoinColumn(name = "merchant_id", nullable = false)
+    private Merchant merchant;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

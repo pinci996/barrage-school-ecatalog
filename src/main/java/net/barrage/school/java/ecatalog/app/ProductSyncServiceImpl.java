@@ -29,7 +29,7 @@ public class ProductSyncServiceImpl implements ProductSyncService {
     }
 
     @Override
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(fixedRate = 1000000)
     @Transactional
     public void syncRemoteProducts() {
         for (var ps : productSources) {

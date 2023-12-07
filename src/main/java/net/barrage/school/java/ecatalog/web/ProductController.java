@@ -45,11 +45,12 @@ public class ProductController {
     }
 
     @SneakyThrows
-//    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     @GetMapping("/list")
     public List<Product> listProducts() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("user = {}", authentication);
+        Object principal = authentication.getPrincipal();
+        log.info("principal = {}", principal);
         return productService.listProducts();
     }
 

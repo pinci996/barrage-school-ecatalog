@@ -29,8 +29,10 @@ public class MerchantController {
         return merchants;
     }
 
+
     @GetMapping(path = "/{merchantId}")
     public Merchant getMerchantById(@PathVariable("merchantId") Long merchantId) {
         return merchantService.getMerchantById(merchantId);
+
     }
 }

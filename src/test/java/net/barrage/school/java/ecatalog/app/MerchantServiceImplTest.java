@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ActiveProfiles("db")
 @SpringBootTest
@@ -57,9 +56,7 @@ public class MerchantServiceImplTest {
         this.save_products_to_db();
         var merchants = merchantRepository.findAll();
         var firstMerchant = merchants.iterator().next();
-        var resultMerchantOptional = impl.getMerchantById(firstMerchant.getId());
-        assertTrue(resultMerchantOptional.isPresent());
-        var resultMerchant = resultMerchantOptional.get();
+        var resultMerchant = impl.getMerchantById(firstMerchant.getId());
         assertEquals(resultMerchant, firstMerchant);
     }
 }
