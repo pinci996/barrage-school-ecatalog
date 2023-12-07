@@ -10,6 +10,10 @@ spring:
     username: postgres
     password: example
 
+  sql:
+    init:
+      mode: never
+
 logging:
   level:
     net.barrage.school.java.ecatalog: DEBUG
