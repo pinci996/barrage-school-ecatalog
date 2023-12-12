@@ -1,5 +1,11 @@
 package net.barrage.school.java.ecatalog.web;
 
+import io.micrometer.core.annotation.Timed;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.barrage.school.java.ecatalog.app.MerchantService;
@@ -35,24 +41,39 @@ public class ProductController {
 
     private final MerchantService merchantService;
 
+    private final MeterRegistry meterRegistry;
+
+    private final Timer listProductsTimer;
+
 
     public ProductController(
             ProductService productService,
             ProductSyncService productSyncService,
-            MerchantService merchantService) {
+            MerchantService merchantService,
+            MeterRegistry meterRegistry) {
         this.productService = productService;
         this.productSyncService = productSyncService;
         this.merchantService = merchantService;
+        this.meterRegistry = meterRegistry;
+        this.listProductsTimer = meterRegistry.timer("ecatalog.products.listProducts.timer");
     }
 
+    @Getter(value = AccessLevel.PRIVATE, lazy = true)
+    private final Counter listProductsCounter = meterRegistry.counter("ecatalog.products.listProducts");
+
     @SneakyThrows
+    @Timed(value = "ecatalog.products.listProducts.timer", description = "Time taken to list products")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/list")
     public List<Product> listProducts() {
+        Timer.Sample sample = Timer.start(meterRegistry);
+        getListProductsCounter().increment();
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("user = {}", authentication);
         Object principal = authentication.getPrincipal();
         log.info("principal = {}", principal);
+        sample.stop(listProductsTimer);
+
         return productService.listProducts();
     }
 
@@ -64,7 +85,6 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public void createProducts(@RequestBody Product newProduct) {
         productService.createProduct(newProduct);
     }
@@ -77,7 +97,6 @@ public class ProductController {
 
     @SneakyThrows
     @DeleteMapping(path = "/{productId}")
-    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<String> deleteProduct(@PathVariable("productId") UUID productId) {
         try {
             productService.deleteProduct(productId);
@@ -90,7 +109,6 @@ public class ProductController {
     }
 
     @PutMapping(path = "/{productId}")
-    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<String> updateProduct(
             @PathVariable("productId") UUID productId,
             @RequestBody Product updatedProduct) {
@@ -105,7 +123,6 @@ public class ProductController {
     }
 
     @PostMapping(path = "/merchants/{merchantName}")
-    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public void syncSingleMerchant(@PathVariable("merchantName") String merchantName) {
         productSyncService.syncProductsForMerchant(merchantName);
     }
