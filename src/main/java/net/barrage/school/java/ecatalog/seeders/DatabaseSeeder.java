@@ -31,16 +31,16 @@ public class DatabaseSeeder {
     }
 
     private void seedRolesTable() {
-        if (!roleRepository.existsByRole("USER")) {
+        if (!roleRepository.existsByRole("ROLE_USER")) {
             Role newRole = new Role();
-            newRole.setRole("USER");
+            newRole.setRole("ROLE_USER");
             roleRepository.save(newRole);
         }
     }
 
     private void seedUsersTable() {
         if (!userRepository.existsByUsername("John")) {
-            Role userRole = roleRepository.findByRole("USER").orElseThrow(() -> new IllegalStateException("Role does not exist"));
+            Role userRole = roleRepository.findByRole("ROLE_USER").orElseThrow(() -> new IllegalStateException("Role does not exist"));
             Set<Role> roles = new HashSet<>();
             roles.add(userRole);
             User user = new User()

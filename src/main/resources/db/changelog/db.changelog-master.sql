@@ -5,7 +5,7 @@ DO $$
 BEGIN
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'roles') THEN
     INSERT INTO roles (role)
-SELECT 'USER' WHERE NOT EXISTS (SELECT 1 FROM roles WHERE role = 'USER');
+SELECT 'USER' WHERE NOT EXISTS (SELECT 1 FROM roles WHERE role = 'ROLE_USER');
 END IF;
 END $$;
 
