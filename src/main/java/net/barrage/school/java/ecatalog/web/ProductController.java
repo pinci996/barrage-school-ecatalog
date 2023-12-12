@@ -8,6 +8,7 @@ import net.barrage.school.java.ecatalog.app.ProductSyncService;
 import net.barrage.school.java.ecatalog.model.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +46,7 @@ public class ProductController {
     }
 
     @SneakyThrows
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/list")
     public List<Product> listProducts() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -62,6 +64,7 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public void createProducts(@RequestBody Product newProduct) {
         productService.createProduct(newProduct);
     }
@@ -74,6 +77,7 @@ public class ProductController {
 
     @SneakyThrows
     @DeleteMapping(path = "/{productId}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<String> deleteProduct(@PathVariable("productId") UUID productId) {
         try {
             productService.deleteProduct(productId);
@@ -86,6 +90,7 @@ public class ProductController {
     }
 
     @PutMapping(path = "/{productId}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<String> updateProduct(
             @PathVariable("productId") UUID productId,
             @RequestBody Product updatedProduct) {
@@ -100,6 +105,7 @@ public class ProductController {
     }
 
     @PostMapping(path = "/merchants/{merchantName}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public void syncSingleMerchant(@PathVariable("merchantName") String merchantName) {
         productSyncService.syncProductsForMerchant(merchantName);
     }

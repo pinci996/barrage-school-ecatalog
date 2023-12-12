@@ -9,10 +9,12 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: example
-
   sql:
     init:
       mode: never
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.sql
+
 
 logging:
   level:

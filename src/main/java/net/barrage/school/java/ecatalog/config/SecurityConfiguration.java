@@ -27,7 +27,8 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html
+@EnableMethodSecurity
+// https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html
 public class SecurityConfiguration {
 
     @Bean
@@ -35,10 +36,10 @@ public class SecurityConfiguration {
             HttpSecurity http
     ) throws Exception {
         http
-//                .csrf(Customizer.withDefaults()) // Post methods not working, how to fix?
-                .csrf(AbstractHttpConfigurer::disable) // Post methods working, probably not the best solution
+                // .csrf(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(
