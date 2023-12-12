@@ -8,7 +8,10 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -24,7 +27,8 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity // https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html
+@EnableMethodSecurity
+// https://docs.spring.io/spring-security/reference/servlet/authorization/method-security.html
 public class SecurityConfiguration {
 
     @Bean
@@ -32,13 +36,19 @@ public class SecurityConfiguration {
             HttpSecurity http
     ) throws Exception {
         http
-                .csrf(Customizer.withDefaults())
+                // .csrf(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(
-                        jwt -> jwt.decoder(jwtDecoder())));
+                        jwt -> jwt.decoder(jwtDecoder())))
+                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
+                .anonymous(Customizer.withDefaults());
+
         return http.build();
     }
 
@@ -71,5 +81,10 @@ public class SecurityConfiguration {
                 .collect(Collectors.toSet())
         );
         return converter;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 }

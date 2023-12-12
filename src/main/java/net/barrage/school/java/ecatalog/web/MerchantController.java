@@ -3,6 +3,7 @@ package net.barrage.school.java.ecatalog.web;
 import lombok.extern.slf4j.Slf4j;
 import net.barrage.school.java.ecatalog.app.MerchantService;
 import net.barrage.school.java.ecatalog.model.Merchant;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,14 +24,18 @@ public class MerchantController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public List<Merchant> listMerchants() {
         var merchants = merchantService.listMerchants();
         log.trace("listMerchants -> {}", merchants);
         return merchants;
     }
 
+
     @GetMapping(path = "/{merchantId}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public Merchant getMerchantById(@PathVariable("merchantId") Long merchantId) {
         return merchantService.getMerchantById(merchantId);
+
     }
 }

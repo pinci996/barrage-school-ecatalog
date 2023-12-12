@@ -18,18 +18,10 @@ import java.util.UUID;
 @Slf4j
 @Service
 public class ProductServiceImpl implements ProductService {
-    private final List<ProductSource> productSources;
-
-    private final MerchantRepository merchantRepository;
-
     private final ProductRepository productRepository;
 
     public ProductServiceImpl(
-            List<ProductSource> productSources,
-            MerchantRepository merchantRepository,
             ProductRepository productRepository) {
-        this.productSources = productSources;
-        this.merchantRepository = merchantRepository;
         this.productRepository = productRepository;
     }
 
