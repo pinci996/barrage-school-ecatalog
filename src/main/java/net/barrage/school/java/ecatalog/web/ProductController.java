@@ -2,7 +2,6 @@ package net.barrage.school.java.ecatalog.web;
 
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.AccessLevel;
@@ -57,9 +56,6 @@ public class ProductController {
         this.merchantService = merchantService;
         this.meterRegistry = meterRegistry;
         this.listProductsTimer = meterRegistry.timer("ecatalog.products.listProducts.timer");
-        Gauge.builder("ecatalog.products.count", this, controller -> controller.listProducts().size())
-                .description("Number of products")
-                .register(meterRegistry);
     }
 
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
@@ -82,7 +78,6 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public List<Product> searchProducts(
             @RequestParam("q") String query
     ) {
