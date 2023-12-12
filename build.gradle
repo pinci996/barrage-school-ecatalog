@@ -30,8 +30,13 @@ dependencies {
     implementation 'org.apache.poi:poi-ooxml:5.2.0'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.liquibase:liquibase-core'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
     runtimeOnly 'org.postgresql:postgresql'
 
+    // Metrics
+    implementation 'io.micrometer:micrometer-registry-prometheus'
+
+    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
