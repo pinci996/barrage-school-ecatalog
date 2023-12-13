@@ -2,6 +2,7 @@ package net.barrage.school.java.ecatalog.web;
 
 import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.AccessLevel;
@@ -44,8 +45,7 @@ public class ProductController {
     private final MeterRegistry meterRegistry;
 
     private final Timer listProductsTimer;
-
-
+    
     public ProductController(
             ProductService productService,
             ProductSyncService productSyncService,
@@ -66,6 +66,9 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/list")
     public List<Product> listProducts() {
+        Gauge.builder("productListSizeGauge", productService, ps -> ps.listProducts().size())
+                .description("Size of the product list")
+                .register(meterRegistry);
         Timer.Sample sample = Timer.start(meterRegistry);
         getListProductsCounter().increment();
         var authentication = SecurityContextHolder.getContext().getAuthentication();
