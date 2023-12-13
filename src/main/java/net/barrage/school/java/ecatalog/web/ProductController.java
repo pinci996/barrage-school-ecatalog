@@ -45,8 +45,7 @@ public class ProductController {
     private final MeterRegistry meterRegistry;
 
     private final Timer listProductsTimer;
-
-
+    
     public ProductController(
             ProductService productService,
             ProductSyncService productSyncService,
@@ -70,6 +69,9 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/list")
     public List<Product> listProducts() {
+        Gauge.builder("productListSizeGauge", productService, ps -> ps.listProducts().size())
+                .description("Size of the product list")
+                .register(meterRegistry);
         Timer.Sample sample = Timer.start(meterRegistry);
         getListProductsCounter().increment();
         var authentication = SecurityContextHolder.getContext().getAuthentication();

@@ -31,10 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
 //    implementation 'org.liquibase:liquibase-core'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-
     runtimeOnly 'org.postgresql:postgresql'
-
 
     // Metrics
     implementation 'io.micrometer:micrometer-registry-prometheus'
