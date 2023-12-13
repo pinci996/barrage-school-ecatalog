@@ -102,5 +102,4 @@ public class ProductServiceImpl implements ProductService {
     public void clearSearchCache() {
     }
 
-
 }

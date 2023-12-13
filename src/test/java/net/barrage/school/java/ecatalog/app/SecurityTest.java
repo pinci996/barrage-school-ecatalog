@@ -38,6 +38,15 @@ public class SecurityTest {
 
     @Test
     @SneakyThrows
+    void jwt_auth_wrong_credentials() {
+        mockMvc.perform(get("/e-catalog/api/v1/products/list")
+                        .header(HttpHeaders.AUTHORIZATION, BEARER + "2"))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @SneakyThrows
     void basic_auth_authorized() {
         mockMvc.perform(get("/e-catalog/api/v1/products/list")
                         .with(httpBasic("John", "Password")))
