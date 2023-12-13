@@ -102,6 +102,7 @@ public class ProductController {
 
     @SneakyThrows
     @DeleteMapping(path = "/{productId}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<String> deleteProduct(@PathVariable("productId") UUID productId) {
         try {
             productService.deleteProduct(productId);
@@ -114,6 +115,7 @@ public class ProductController {
     }
 
     @PutMapping(path = "/{productId}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public ResponseEntity<String> updateProduct(
             @PathVariable("productId") UUID productId,
             @RequestBody Product updatedProduct) {
@@ -128,6 +130,7 @@ public class ProductController {
     }
 
     @PostMapping(path = "/merchants/{merchantName}")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public void syncSingleMerchant(@PathVariable("merchantName") String merchantName) {
         productSyncService.syncProductsForMerchant(merchantName);
     }
