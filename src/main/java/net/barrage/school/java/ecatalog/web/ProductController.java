@@ -45,7 +45,8 @@ public class ProductController {
     private final MeterRegistry meterRegistry;
 
     private final Timer listProductsTimer;
-    
+
+
     public ProductController(
             ProductService productService,
             ProductSyncService productSyncService,
@@ -56,6 +57,9 @@ public class ProductController {
         this.merchantService = merchantService;
         this.meterRegistry = meterRegistry;
         this.listProductsTimer = meterRegistry.timer("ecatalog.products.listProducts.timer");
+        Gauge.builder("ecatalog.products.count", this, controller -> controller.listProducts().size())
+                .description("Number of products")
+                .register(meterRegistry);
     }
 
     @Getter(value = AccessLevel.PRIVATE, lazy = true)
@@ -66,9 +70,6 @@ public class ProductController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/list")
     public List<Product> listProducts() {
-        Gauge.builder("productListSizeGauge", productService, ps -> ps.listProducts().size())
-                .description("Size of the product list")
-                .register(meterRegistry);
         Timer.Sample sample = Timer.start(meterRegistry);
         getListProductsCounter().increment();
         var authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -81,6 +82,7 @@ public class ProductController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public List<Product> searchProducts(
             @RequestParam("q") String query
     ) {
