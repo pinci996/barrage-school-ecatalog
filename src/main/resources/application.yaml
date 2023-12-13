@@ -12,8 +12,6 @@ spring:
   sql:
     init:
       mode: never
-  liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.sql
 
 
 management:
