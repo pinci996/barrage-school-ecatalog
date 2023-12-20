@@ -1,6 +1,5 @@
 package net.barrage.school.java.ecatalog.web;
 
-import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -66,7 +65,6 @@ public class ProductController {
     private final Counter listProductsCounter = meterRegistry.counter("ecatalog.products.listProducts");
 
     @SneakyThrows
-    @Timed(value = "ecatalog.products.listProducts.timer", description = "Time taken to list products")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/list")
     public List<Product> listProducts() {
