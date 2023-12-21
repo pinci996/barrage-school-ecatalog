@@ -12,9 +12,15 @@ spring:
     username: postgres
     password: example
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,prometheus
+
 ecatalog:
   products:
     sources:
       - name: Uncle
-        format: json
         url: https://www.dropbox.com/scl/fi/mhq4vmv42x1hy5k430ae3/products.json?rlkey=00w6n2cfjk8p5wwizz6c4tckr&dl=1
+        format: json
