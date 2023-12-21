@@ -8,6 +8,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -80,4 +84,19 @@ class ProductServiceImplTest {
         var resultProduct = resultProductOptional.get();
         assertEquals(resultProduct, firstProduct);
     }
+
+    @Test
+    public void testListProducts() throws Exception {
+        int requestCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(requestCount);
+        for (int i = 0; i < requestCount; i++) {
+            executorService.submit(() -> {
+                impl.listProducts();
+            });
+        }
+        executorService.shutdown();
+        executorService.awaitTermination(1, TimeUnit.MINUTES);
+    }
+
+    
 }

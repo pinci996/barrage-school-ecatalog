@@ -1,5 +1,11 @@
 package net.barrage.school.java.ecatalog.web;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.barrage.school.java.ecatalog.app.MerchantService;
@@ -35,28 +41,46 @@ public class ProductController {
 
     private final MerchantService merchantService;
 
+    private final MeterRegistry meterRegistry;
+
+    private final Timer listProductsTimer;
+
 
     public ProductController(
             ProductService productService,
             ProductSyncService productSyncService,
-            MerchantService merchantService) {
+            MerchantService merchantService,
+            MeterRegistry meterRegistry) {
         this.productService = productService;
         this.productSyncService = productSyncService;
         this.merchantService = merchantService;
+        this.meterRegistry = meterRegistry;
+        this.listProductsTimer = meterRegistry.timer("ecatalog.products.listProducts.timer");
+        Gauge.builder("ecatalog.products.count", this, controller -> controller.listProducts().size())
+                .description("Number of products")
+                .register(meterRegistry);
     }
+
+    @Getter(value = AccessLevel.PRIVATE, lazy = true)
+    private final Counter listProductsCounter = meterRegistry.counter("ecatalog.products.listProducts");
 
     @SneakyThrows
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/list")
     public List<Product> listProducts() {
+        Timer.Sample sample = Timer.start(meterRegistry);
+        getListProductsCounter().increment();
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("user = {}", authentication);
         Object principal = authentication.getPrincipal();
         log.info("principal = {}", principal);
+        sample.stop(listProductsTimer);
+
         return productService.listProducts();
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public List<Product> searchProducts(
             @RequestParam("q") String query
     ) {
@@ -64,7 +88,6 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_SYSTEM_ADMIN')")
     public void createProducts(@RequestBody Product newProduct) {
         productService.createProduct(newProduct);
     }
